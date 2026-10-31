@@ -33,41 +33,79 @@
       "runs_under_wibo": true,
       "mirrors": [
         {
-          "url": "https://files.typeguru.nl/setup-msvc/packs/e728de13878c2876/0d6f444cfc120e4e62a092726844fa310c74b1bc.tar.gz",
-          "sha256": "e728de13878c2876e855e2206fc4b8b0a52a3e801c29bd8e0478ef1670aa7be7",
-          "strip_prefix": "ffxiv_msvc8.0sp1-0d6f444cfc120e4e62a092726844fa310c74b1bc",
-          "download_bytes": 16266000,
-          "is_mirror": true,
-          "$note": "Mirror. Same sha256 as upstream, which follows as fallback."
+          "url": "https://github.com/archaic-msvc/msvc800_sp1/archive/4b1bafba636f67eb76f548f0f0e7f38864091a4a.tar.gz",
+          "sha256": "7ddbb5064be4bac26412f1f09a837bd5b533c2f84fa03cb6ed412a573d8a89eb",
+          "strip_prefix": "msvc800_sp1-4b1bafba636f67eb76f548f0f0e7f38864091a4a",
+          "download_bytes": 72583000,
+          "$note": "Complete SP1 toolchain: cl.exe 14.00.50727.762 verified, plus libcmt.lib, libcpmt.lib and PlatformSDK/Lib."
         },
         {
           "url": "https://github.com/Drahsid/ffxiv_msvc8.0sp1/archive/0d6f444cfc120e4e62a092726844fa310c74b1bc.tar.gz",
           "sha256": "e728de13878c2876e855e2206fc4b8b0a52a3e801c29bd8e0478ef1670aa7be7",
           "strip_prefix": "ffxiv_msvc8.0sp1-0d6f444cfc120e4e62a092726844fa310c74b1bc",
-          "download_bytes": 16266000
+          "download_bytes": 16266000,
+          "$note": "Fallback. Compiler and headers only, no libraries; needs libs_from."
         }
       ],
       "layout": {
-        "bin": "bin",
-        "include": "include",
-        "platform_sdk_include": "PlatformSDK/Include"
+        "bin": "VC/bin",
+        "include": "VC/include",
+        "lib": "VC/lib",
+        "platform_sdk_include": "VC/PlatformSDK/Include",
+        "platform_sdk_lib": "VC/PlatformSDK/Lib"
       },
       "contains": {
         "cl": true,
         "ml": true,
         "link": true,
-        "lib_exe": false,
-        "dumpbin": false,
-        "undname": false,
+        "lib_exe": true,
+        "dumpbin": true,
+        "undname": true,
         "rc": false,
         "crt_headers": true,
         "platform_sdk_headers": true,
-        "crt_libs": false,
-        "platform_sdk_libs": false,
+        "crt_libs": true,
+        "platform_sdk_libs": true,
         "directx_headers": false,
-        "note": "No libraries of any kind. Its 42 .lib files are CRT-source build inputs, not libcmt.lib. Compile-only unless paired with libs_from."
+        "note": "Complete toolchain. cl.exe 14.00.50727.762 confirmed by running it, 2026-10-31, with SP1's own libcmt.lib and libcpmt.lib -- the libraries the original image links, which no other public pack carried."
       },
-      "libs_from": "14.00.50727.42"
+      "components": {
+        "bin": {
+          "path": "packs/c99a4b7567a503f3/14.00.50727.762-bin.tar.zst",
+          "sha256": "c99a4b7567a503f3df6e82fc317b1f3990a652bfbc2e287a7f7259d239f6c130",
+          "bytes": 3842706,
+          "files": 48
+        },
+        "include": {
+          "path": "packs/b75e447216be69ae/14.00.50727.762-include.tar.zst",
+          "sha256": "b75e447216be69ae96087930a1673593388a3ab0781818e790c4c57be8a2d9f4",
+          "bytes": 311705,
+          "files": 167
+        },
+        "lib": {
+          "path": "packs/d734c846e62a07f2/14.00.50727.762-lib.tar.zst",
+          "sha256": "d734c846e62a07f2b148ecc6d765ad5f8d14c28e203527669247694588b232a0",
+          "bytes": 4434883,
+          "files": 57
+        },
+        "platform_sdk_include": {
+          "path": "packs/2fe4d4805043266a/14.00.50727.762-platform_sdk_include.tar.zst",
+          "sha256": "2fe4d4805043266a26c0f5c3bee2449a880c301bde65697a37b2861dda604d10",
+          "bytes": 4045352,
+          "files": 1022
+        },
+        "platform_sdk_lib": {
+          "path": "packs/e225995f71401099/14.00.50727.762-platform_sdk_lib.tar.zst",
+          "sha256": "e225995f71401099dd3cab1df68f769ed918fc81a256346e9fcc96e967342c7c",
+          "bytes": 1464519,
+          "files": 196
+        }
+      },
+      "component_format": "tar.zst",
+      "derived_from": {
+        "url": "https://github.com/archaic-msvc/msvc800_sp1/archive/4b1bafba636f67eb76f548f0f0e7f38864091a4a.tar.gz",
+        "sha256": "7ddbb5064be4bac26412f1f09a837bd5b533c2f84fa03cb6ed412a573d8a89eb"
+      }
     },
     "14.00.50727.42": {
       "aliases": [

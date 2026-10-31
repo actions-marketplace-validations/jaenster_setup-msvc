@@ -109,8 +109,16 @@ def main() -> int:
     check("14.00.50727.762" in tools and "14.00.50727.42" in tools,
           "both 2005 RTM and SP1 must be present and distinct")
     sp1 = tools.get("14.00.50727.762", {})
-    check(sp1.get("libs_from") == "14.00.50727.42",
-          "2005 SP1 must borrow libraries from RTM: it ships none")
+    # SP1 used to be compiler-only and borrowed RTM's libraries. archaic-msvc's
+    # pack carries SP1's own libcmt.lib and libcpmt.lib, which is what the
+    # original image actually links, so borrowing would now be wrong.
+    check(sp1.get("contains", {}).get("crt_libs") is True,
+          "2005 SP1 must carry its own CRT libraries: RTM's would not byte-match")
+    check("libs_from" not in sp1,
+          "2005 SP1 ships libraries now and must not borrow RTM's")
+    for build in ("14.00.50727.42", "14.00.50727.762"):
+        b = tools[build].get("banner", "")
+        check(build in str(b), f"{build}: banner must pin the exact build")
 
     if failures:
         print(f"FAILED ({len(failures)}):")
