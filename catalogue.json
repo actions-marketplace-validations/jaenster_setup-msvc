@@ -1,110 +1,105 @@
 {
-  "$comment": [
-    "Every toolchain this action can set up, keyed by the exact cl.exe build.",
-    "",
-    "WHY THE EXACT BUILD IS THE KEY, not the marketing version: for byte-matching",
-    "work the compiler's identity IS the question. Visual C++ 2005 RTM and SP1 both",
-    "stamp 50727 in the PE Rich header, so a binary cannot tell you which one built",
-    "it; only the fourth component (.42 vs .762) distinguishes them, and they emit",
-    "different code. Any version close to another gets its own entry here.",
-    "",
-    "'mirrors' is a list on purpose. These are third-party community archives and",
-    "any one of them can disappear; the action tries each in order and verifies the",
-    "same sha256 whichever answers. This action redistributes nothing: it points at",
-    "upstream and checks what arrives.",
-    "",
-    "'contains' is measured, not assumed. It is there because the packs differ",
-    "wildly in completeness and a missing lib/ directory is not discoverable until",
-    "a build fails confusingly."
-  ],
   "schema": 1,
+  "mirror_base": "https://files.typeguru.nl/setup-msvc",
   "toolchains": {
-    "14.00.50727.762": {
+    "12.00.8168": {
       "aliases": [
-        "8.0sp1",
-        "2005sp1",
-        "vc8sp1",
-        "msvc8.0sp1"
+        "6.0",
+        "98",
+        "vc6"
       ],
-      "name": "Visual C++ 2005 SP1",
-      "product": "2005",
-      "banner": "Version 14.00.50727.762 for 80x86",
+      "name": "Visual C++ 6.0",
+      "product": "6.0",
+      "banner": "Version 12.00.8168 for 80x86",
       "license": "proprietary",
       "runs_under_wibo": true,
       "mirrors": [
         {
-          "url": "https://github.com/archaic-msvc/msvc800_sp1/archive/4b1bafba636f67eb76f548f0f0e7f38864091a4a.tar.gz",
-          "sha256": "7ddbb5064be4bac26412f1f09a837bd5b533c2f84fa03cb6ed412a573d8a89eb",
-          "strip_prefix": "msvc800_sp1-4b1bafba636f67eb76f548f0f0e7f38864091a4a",
-          "download_bytes": 72583000,
-          "$note": "Complete SP1 toolchain: cl.exe 14.00.50727.762 verified, plus libcmt.lib, libcpmt.lib and PlatformSDK/Lib."
+          "sha256": "5c81e9c2ab0ac5545022c1418a23392cb514db950cf6dcb1f48327270403fcd3",
+          "url": "https://files.typeguru.nl/setup-msvc/packs/5c81e9c2ab0ac554/msvc6.0.tar.gz",
+          "is_mirror": true,
+          "$note": "Mirror. Same sha256 as upstream, which follows as fallback."
         },
         {
-          "url": "https://github.com/Drahsid/ffxiv_msvc8.0sp1/archive/0d6f444cfc120e4e62a092726844fa310c74b1bc.tar.gz",
-          "sha256": "e728de13878c2876e855e2206fc4b8b0a52a3e801c29bd8e0478ef1670aa7be7",
-          "strip_prefix": "ffxiv_msvc8.0sp1-0d6f444cfc120e4e62a092726844fa310c74b1bc",
-          "download_bytes": 16266000,
-          "$note": "Fallback. Compiler and headers only, no libraries; needs libs_from."
+          "sha256": "5c81e9c2ab0ac5545022c1418a23392cb514db950cf6dcb1f48327270403fcd3",
+          "url": "https://github.com/OmniBlade/decomp.me/releases/download/msvcwin9x/msvc6.0.tar.gz"
         }
       ],
       "layout": {
-        "bin": "VC/bin",
-        "include": "VC/include",
-        "lib": "VC/lib",
-        "platform_sdk_include": "VC/PlatformSDK/Include",
-        "platform_sdk_lib": "VC/PlatformSDK/Lib"
+        "bin": "Bin",
+        "include": "Include",
+        "lib": "Lib"
       },
       "contains": {
         "cl": true,
-        "ml": true,
-        "link": true,
-        "lib_exe": true,
-        "dumpbin": true,
-        "undname": true,
-        "rc": false,
-        "crt_headers": true,
-        "platform_sdk_headers": true,
-        "crt_libs": true,
-        "platform_sdk_libs": true,
-        "directx_headers": false,
-        "note": "Complete toolchain. cl.exe 14.00.50727.762 confirmed by running it, 2026-10-31, with SP1's own libcmt.lib and libcpmt.lib -- the libraries the original image links, which no other public pack carried."
-      },
-      "components": {
-        "bin": {
-          "path": "packs/c99a4b7567a503f3/14.00.50727.762-bin.tar.zst",
-          "sha256": "c99a4b7567a503f3df6e82fc317b1f3990a652bfbc2e287a7f7259d239f6c130",
-          "bytes": 3842706,
-          "files": 48
+        "note": "VC6 service packs change codegen, so 6.0/SP5/SP6 need separate entries once mirrors are pinned; archaic-msvc hosts msvc600, msvc600_sp5, msvc600_sp5_vcpp and msvc600_sp6. Build confirmed by running cl.exe under wibo, 2026-10-31."
+      }
+    },
+    "13.00.9466": {
+      "aliases": [
+        "7.0",
+        "2002",
+        "vc70"
+      ],
+      "name": "Visual C++ .NET 2002",
+      "product": "2002",
+      "banner": "Version 13.00.9466 for 80x86",
+      "license": "proprietary",
+      "runs_under_wibo": true,
+      "mirrors": [
+        {
+          "sha256": "9b995af7ff4b31f7d8cc91194f54e21a0a07ff6be360a94e9aa3686649b3f072",
+          "url": "https://files.typeguru.nl/setup-msvc/packs/9b995af7ff4b31f7/msvc7.0.tar.gz",
+          "is_mirror": true,
+          "$note": "Mirror. Same sha256 as upstream, which follows as fallback."
         },
-        "include": {
-          "path": "packs/b75e447216be69ae/14.00.50727.762-include.tar.zst",
-          "sha256": "b75e447216be69ae96087930a1673593388a3ab0781818e790c4c57be8a2d9f4",
-          "bytes": 311705,
-          "files": 167
-        },
-        "lib": {
-          "path": "packs/d734c846e62a07f2/14.00.50727.762-lib.tar.zst",
-          "sha256": "d734c846e62a07f2b148ecc6d765ad5f8d14c28e203527669247694588b232a0",
-          "bytes": 4434883,
-          "files": 57
-        },
-        "platform_sdk_include": {
-          "path": "packs/2fe4d4805043266a/14.00.50727.762-platform_sdk_include.tar.zst",
-          "sha256": "2fe4d4805043266a26c0f5c3bee2449a880c301bde65697a37b2861dda604d10",
-          "bytes": 4045352,
-          "files": 1022
-        },
-        "platform_sdk_lib": {
-          "path": "packs/e225995f71401099/14.00.50727.762-platform_sdk_lib.tar.zst",
-          "sha256": "e225995f71401099dd3cab1df68f769ed918fc81a256346e9fcc96e967342c7c",
-          "bytes": 1464519,
-          "files": 196
+        {
+          "sha256": "9b995af7ff4b31f7d8cc91194f54e21a0a07ff6be360a94e9aa3686649b3f072",
+          "url": "https://github.com/roblabla/MSVC-7.0-Portable/releases/download/release/msvc7.0.tar.gz"
         }
+      ],
+      "layout": {
+        "bin": "Bin",
+        "include": "Include",
+        "lib": "Lib"
       },
-      "component_format": "tar.zst",
-      "derived_from": {
-        "url": "https://github.com/archaic-msvc/msvc800_sp1/archive/4b1bafba636f67eb76f548f0f0e7f38864091a4a.tar.gz",
-        "sha256": "7ddbb5064be4bac26412f1f09a837bd5b533c2f84fa03cb6ed412a573d8a89eb"
+      "contains": {
+        "cl": true,
+        "note": "Build confirmed by running cl.exe under wibo, 2026-10-31."
+      }
+    },
+    "13.10.3077": {
+      "aliases": [
+        "7.1",
+        "2003",
+        "vc71"
+      ],
+      "name": "Visual C++ .NET 2003",
+      "product": "2003",
+      "banner": "Version 13.10.3077 for 80x86",
+      "license": "proprietary",
+      "runs_under_wibo": true,
+      "mirrors": [
+        {
+          "sha256": "49eba7f9f72644f6f872a4176baeac544e8b5dfb2be1f47bb4d439b1136ffeac",
+          "url": "https://files.typeguru.nl/setup-msvc/packs/49eba7f9f72644f6/msvc7.0.tar.gz",
+          "is_mirror": true,
+          "$note": "Mirror. Same sha256 as upstream, which follows as fallback."
+        },
+        {
+          "sha256": "49eba7f9f72644f6f872a4176baeac544e8b5dfb2be1f47bb4d439b1136ffeac",
+          "url": "https://github.com/OmniBlade/decomp.me/releases/download/msvcwin9x/msvc7.0.tar.gz",
+          "$note": "Despite the filename this archive holds 7.1 (13.10.3077), not 7.0."
+        }
+      ],
+      "layout": {
+        "bin": "Bin",
+        "include": "Include",
+        "lib": "Lib"
+      },
+      "contains": {
+        "cl": true,
+        "note": "Headers are VC's and the SDK's merged into one Include folder. Build confirmed by running cl.exe under wibo, 2026-10-31."
       }
     },
     "14.00.50727.42": {
@@ -121,16 +116,16 @@
       "runs_under_wibo": true,
       "mirrors": [
         {
-          "url": "https://files.typeguru.nl/setup-msvc/packs/18e876d22285aa17/936f93b9e9e92943ed5c9398d24712a32c2e9fe4.tar.gz",
           "sha256": "18e876d22285aa17be6676d765be6556cb30ffb26e0c9dad59ddd66e5ccf6afa",
+          "url": "https://files.typeguru.nl/setup-msvc/packs/18e876d22285aa17/936f93b9e9e92943ed5c9398d24712a32c2e9fe4.tar.gz",
           "strip_prefix": "msvc8.0-936f93b9e9e92943ed5c9398d24712a32c2e9fe4",
           "download_bytes": 65000000,
           "is_mirror": true,
           "$note": "Mirror. Same sha256 as upstream, which follows as fallback."
         },
         {
-          "url": "https://github.com/widberg/msvc8.0/archive/936f93b9e9e92943ed5c9398d24712a32c2e9fe4.tar.gz",
           "sha256": "18e876d22285aa17be6676d765be6556cb30ffb26e0c9dad59ddd66e5ccf6afa",
+          "url": "https://github.com/widberg/msvc8.0/archive/936f93b9e9e92943ed5c9398d24712a32c2e9fe4.tar.gz",
           "strip_prefix": "msvc8.0-936f93b9e9e92943ed5c9398d24712a32c2e9fe4",
           "download_bytes": 65000000
         }
@@ -144,18 +139,106 @@
       },
       "contains": {
         "cl": true,
-        "ml": true,
-        "link": true,
-        "lib_exe": true,
-        "dumpbin": true,
-        "undname": true,
-        "rc": true,
         "crt_headers": true,
-        "platform_sdk_headers": true,
         "crt_libs": true,
-        "platform_sdk_libs": true,
         "directx_headers": false,
-        "note": "Complete toolchain: libcmt.lib, libcpmt.lib, 196 Platform SDK import libs, atlmfc and redist. The usual source of libraries for the SP1 pack."
+        "dumpbin": true,
+        "lib_exe": true,
+        "link": true,
+        "ml": true,
+        "note": "Complete toolchain: libcmt.lib, libcpmt.lib, 196 Platform SDK import libs, atlmfc and redist. The usual source of libraries for the SP1 pack.",
+        "platform_sdk_headers": true,
+        "platform_sdk_libs": true,
+        "rc": true,
+        "undname": true
+      }
+    },
+    "14.00.50727.762": {
+      "aliases": [
+        "8.0sp1",
+        "2005sp1",
+        "vc8sp1",
+        "msvc8.0sp1"
+      ],
+      "name": "Visual C++ 2005 SP1",
+      "product": "2005",
+      "banner": "Version 14.00.50727.762 for 80x86",
+      "license": "proprietary",
+      "runs_under_wibo": true,
+      "mirrors": [
+        {
+          "sha256": "7ddbb5064be4bac26412f1f09a837bd5b533c2f84fa03cb6ed412a573d8a89eb",
+          "url": "https://github.com/archaic-msvc/msvc800_sp1/archive/4b1bafba636f67eb76f548f0f0e7f38864091a4a.tar.gz",
+          "strip_prefix": "msvc800_sp1-4b1bafba636f67eb76f548f0f0e7f38864091a4a",
+          "download_bytes": 72583000,
+          "$note": "Complete SP1 toolchain: cl.exe 14.00.50727.762 verified, plus libcmt.lib, libcpmt.lib and PlatformSDK/Lib."
+        },
+        {
+          "sha256": "e728de13878c2876e855e2206fc4b8b0a52a3e801c29bd8e0478ef1670aa7be7",
+          "url": "https://github.com/Drahsid/ffxiv_msvc8.0sp1/archive/0d6f444cfc120e4e62a092726844fa310c74b1bc.tar.gz",
+          "strip_prefix": "ffxiv_msvc8.0sp1-0d6f444cfc120e4e62a092726844fa310c74b1bc",
+          "download_bytes": 16266000,
+          "$note": "Fallback. Compiler and headers only, no libraries; needs libs_from."
+        }
+      ],
+      "layout": {
+        "bin": "VC/bin",
+        "include": "VC/include",
+        "lib": "VC/lib",
+        "platform_sdk_include": "VC/PlatformSDK/Include",
+        "platform_sdk_lib": "VC/PlatformSDK/Lib"
+      },
+      "components": {
+        "bin": {
+          "path": "packs/6e1ac895c2a30aa5/14.00.50727.762-bin.tar.zst",
+          "sha256": "6e1ac895c2a30aa56a9cc1ee981515eaaf3a226c5b825411413809765d22645f",
+          "bytes": 4241503,
+          "files": 48
+        },
+        "include": {
+          "path": "packs/2eba7ce91a60188f/14.00.50727.762-include.tar.zst",
+          "sha256": "2eba7ce91a60188fd6f9b8761f8e6906afc358c61dfd6dd9b875d2eb072eb4d2",
+          "bytes": 356803,
+          "files": 167
+        },
+        "lib": {
+          "path": "packs/d9904edf54843383/14.00.50727.762-lib.tar.zst",
+          "sha256": "d9904edf54843383fc4e49d043746930470a1084dbca2de1dae2d3ef0a15e394",
+          "bytes": 5519031,
+          "files": 57
+        },
+        "platform_sdk_include": {
+          "path": "packs/607e10f1c01b1423/14.00.50727.762-platform_sdk_include.tar.zst",
+          "sha256": "607e10f1c01b1423ded4a93d119112c55c00e5dcc0cede142c956f56385efe48",
+          "bytes": 4728499,
+          "files": 1022
+        },
+        "platform_sdk_lib": {
+          "path": "packs/620d0ceafba6e5aa/14.00.50727.762-platform_sdk_lib.tar.zst",
+          "sha256": "620d0ceafba6e5aa979a98b703509a3a5daa05403f7c47de3a7646755068e781",
+          "bytes": 1748540,
+          "files": 196
+        }
+      },
+      "component_format": "tar.zst",
+      "derived_from": {
+        "sha256": "7ddbb5064be4bac26412f1f09a837bd5b533c2f84fa03cb6ed412a573d8a89eb",
+        "url": "https://github.com/archaic-msvc/msvc800_sp1/archive/4b1bafba636f67eb76f548f0f0e7f38864091a4a.tar.gz"
+      },
+      "contains": {
+        "cl": true,
+        "crt_headers": true,
+        "crt_libs": true,
+        "directx_headers": false,
+        "dumpbin": true,
+        "lib_exe": true,
+        "link": true,
+        "ml": true,
+        "note": "Complete toolchain. cl.exe 14.00.50727.762 confirmed by running it, 2026-10-31, with SP1's own libcmt.lib and libcpmt.lib -- the libraries the original image links, which no other public pack carried.",
+        "platform_sdk_headers": true,
+        "platform_sdk_libs": true,
+        "rc": false,
+        "undname": true
       }
     },
     "15.00.21022.08": {
@@ -168,18 +251,17 @@
       "product": "2008",
       "banner": "Version 15.00.21022.08 for 80x86",
       "license": "proprietary",
-      "runs_under_wibo": null,
       "mirrors": [
         {
-          "url": "https://files.typeguru.nl/setup-msvc/packs/084c135403e1f46a/c9d710cef9a3dec08d7d2dca78a3b494335a5baa.tar.gz",
           "sha256": "084c135403e1f46abd1db1b7059de9ae95a4304049d2428f2816818e89004b89",
+          "url": "https://files.typeguru.nl/setup-msvc/packs/084c135403e1f46a/c9d710cef9a3dec08d7d2dca78a3b494335a5baa.tar.gz",
           "strip_prefix": "msvc900-c9d710cef9a3dec08d7d2dca78a3b494335a5baa",
           "is_mirror": true,
           "$note": "Mirror. Same sha256 as upstream, which follows as fallback."
         },
         {
-          "url": "https://github.com/archaic-msvc/msvc900/archive/c9d710cef9a3dec08d7d2dca78a3b494335a5baa.tar.gz",
           "sha256": "084c135403e1f46abd1db1b7059de9ae95a4304049d2428f2816818e89004b89",
+          "url": "https://github.com/archaic-msvc/msvc900/archive/c9d710cef9a3dec08d7d2dca78a3b494335a5baa.tar.gz",
           "strip_prefix": "msvc900-c9d710cef9a3dec08d7d2dca78a3b494335a5baa"
         }
       ],
@@ -204,18 +286,17 @@
       "product": "2008",
       "banner": "Version 15.00.30729.01 for 80x86",
       "license": "proprietary",
-      "runs_under_wibo": null,
       "mirrors": [
         {
-          "url": "https://files.typeguru.nl/setup-msvc/packs/2544e8fb817421bd/a1465772ad6c5767f6d191ff0861282efc822f5c.tar.gz",
           "sha256": "2544e8fb817421bd5a09fd4cc243ff0a0db6049cf1a15b92a7b4a3f1f6568e69",
+          "url": "https://files.typeguru.nl/setup-msvc/packs/2544e8fb817421bd/a1465772ad6c5767f6d191ff0861282efc822f5c.tar.gz",
           "strip_prefix": "msvc900_sp1-a1465772ad6c5767f6d191ff0861282efc822f5c",
           "is_mirror": true,
           "$note": "Mirror. Same sha256 as upstream, which follows as fallback."
         },
         {
-          "url": "https://github.com/Marvisak/msvc900_sp1/archive/a1465772ad6c5767f6d191ff0861282efc822f5c.tar.gz",
           "sha256": "2544e8fb817421bd5a09fd4cc243ff0a0db6049cf1a15b92a7b4a3f1f6568e69",
+          "url": "https://github.com/Marvisak/msvc900_sp1/archive/a1465772ad6c5767f6d191ff0861282efc822f5c.tar.gz",
           "strip_prefix": "msvc900_sp1-a1465772ad6c5767f6d191ff0861282efc822f5c"
         }
       ],
@@ -241,18 +322,17 @@
       "product": "2010",
       "banner": "Version 16.00.30319.01 for 80x86",
       "license": "proprietary",
-      "runs_under_wibo": null,
       "mirrors": [
         {
-          "url": "https://files.typeguru.nl/setup-msvc/packs/923684491a7e3fbd/f8977e2cacbe6cab4f9e73eb2c05695a88519bfe.tar.gz",
           "sha256": "923684491a7e3fbdc326a0681c7d8d4ecfb9a9d217638038ac2859c702c45b01",
+          "url": "https://files.typeguru.nl/setup-msvc/packs/923684491a7e3fbd/f8977e2cacbe6cab4f9e73eb2c05695a88519bfe.tar.gz",
           "strip_prefix": "msvc1000-f8977e2cacbe6cab4f9e73eb2c05695a88519bfe",
           "is_mirror": true,
           "$note": "Mirror. Same sha256 as upstream, which follows as fallback."
         },
         {
-          "url": "https://github.com/archaic-msvc/msvc1000/archive/f8977e2cacbe6cab4f9e73eb2c05695a88519bfe.tar.gz",
           "sha256": "923684491a7e3fbdc326a0681c7d8d4ecfb9a9d217638038ac2859c702c45b01",
+          "url": "https://github.com/archaic-msvc/msvc1000/archive/f8977e2cacbe6cab4f9e73eb2c05695a88519bfe.tar.gz",
           "strip_prefix": "msvc1000-f8977e2cacbe6cab4f9e73eb2c05695a88519bfe"
         }
       ],
@@ -277,18 +357,17 @@
       "product": "2010",
       "banner": "Version 16.00.40219.01 for 80x86",
       "license": "proprietary",
-      "runs_under_wibo": null,
       "mirrors": [
         {
-          "url": "https://files.typeguru.nl/setup-msvc/packs/4d256b37c4fea132/09a53c11f781ec9ab5e66772ba720b9d85e4c2a4.tar.gz",
           "sha256": "4d256b37c4fea1327c554e19f9fda3078155a404699a5fb3f33a8a4804258bfb",
+          "url": "https://files.typeguru.nl/setup-msvc/packs/4d256b37c4fea132/09a53c11f781ec9ab5e66772ba720b9d85e4c2a4.tar.gz",
           "strip_prefix": "msvc1000_sp1-09a53c11f781ec9ab5e66772ba720b9d85e4c2a4",
           "is_mirror": true,
           "$note": "Mirror. Same sha256 as upstream, which follows as fallback."
         },
         {
-          "url": "https://github.com/archaic-msvc/msvc1000_sp1/archive/09a53c11f781ec9ab5e66772ba720b9d85e4c2a4.tar.gz",
           "sha256": "4d256b37c4fea1327c554e19f9fda3078155a404699a5fb3f33a8a4804258bfb",
+          "url": "https://github.com/archaic-msvc/msvc1000_sp1/archive/09a53c11f781ec9ab5e66772ba720b9d85e4c2a4.tar.gz",
           "strip_prefix": "msvc1000_sp1-09a53c11f781ec9ab5e66772ba720b9d85e4c2a4"
         }
       ],
@@ -303,124 +382,22 @@
         "cl": true,
         "note": "Needs msvcp100.dll beside cl.exe; wibo has no builtin for it."
       }
-    },
-    "13.10.3077": {
-      "aliases": [
-        "7.1",
-        "2003",
-        "vc71"
-      ],
-      "name": "Visual C++ .NET 2003",
-      "product": "2003",
-      "banner": "Version 13.10.3077 for 80x86",
-      "license": "proprietary",
-      "runs_under_wibo": true,
-      "mirrors": [
-        {
-          "url": "https://files.typeguru.nl/setup-msvc/packs/49eba7f9f72644f6/msvc7.0.tar.gz",
-          "sha256": "49eba7f9f72644f6f872a4176baeac544e8b5dfb2be1f47bb4d439b1136ffeac",
-          "is_mirror": true,
-          "$note": "Mirror. Same sha256 as upstream, which follows as fallback."
-        },
-        {
-          "url": "https://github.com/OmniBlade/decomp.me/releases/download/msvcwin9x/msvc7.0.tar.gz",
-          "sha256": "49eba7f9f72644f6f872a4176baeac544e8b5dfb2be1f47bb4d439b1136ffeac",
-          "$note": "Despite the filename this archive holds 7.1 (13.10.3077), not 7.0."
-        }
-      ],
-      "layout": {
-        "bin": "Bin",
-        "include": "Include",
-        "lib": "Lib"
-      },
-      "contains": {
-        "cl": true,
-        "note": "Headers are VC's and the SDK's merged into one Include folder. Build confirmed by running cl.exe under wibo, 2026-10-31."
-      }
-    },
-    "13.00.9466": {
-      "aliases": [
-        "7.0",
-        "2002",
-        "vc70"
-      ],
-      "name": "Visual C++ .NET 2002",
-      "product": "2002",
-      "banner": "Version 13.00.9466 for 80x86",
-      "license": "proprietary",
-      "runs_under_wibo": true,
-      "mirrors": [
-        {
-          "url": "https://files.typeguru.nl/setup-msvc/packs/9b995af7ff4b31f7/msvc7.0.tar.gz",
-          "sha256": "9b995af7ff4b31f7d8cc91194f54e21a0a07ff6be360a94e9aa3686649b3f072",
-          "is_mirror": true,
-          "$note": "Mirror. Same sha256 as upstream, which follows as fallback."
-        },
-        {
-          "url": "https://github.com/roblabla/MSVC-7.0-Portable/releases/download/release/msvc7.0.tar.gz",
-          "sha256": "9b995af7ff4b31f7d8cc91194f54e21a0a07ff6be360a94e9aa3686649b3f072"
-        }
-      ],
-      "layout": {
-        "bin": "Bin",
-        "include": "Include",
-        "lib": "Lib"
-      },
-      "contains": {
-        "cl": true,
-        "note": "Build confirmed by running cl.exe under wibo, 2026-10-31."
-      }
-    },
-    "12.00.8168": {
-      "aliases": [
-        "6.0",
-        "98",
-        "vc6"
-      ],
-      "name": "Visual C++ 6.0",
-      "product": "6.0",
-      "banner": "Version 12.00.8168 for 80x86",
-      "license": "proprietary",
-      "runs_under_wibo": true,
-      "mirrors": [
-        {
-          "url": "https://files.typeguru.nl/setup-msvc/packs/5c81e9c2ab0ac554/msvc6.0.tar.gz",
-          "sha256": "5c81e9c2ab0ac5545022c1418a23392cb514db950cf6dcb1f48327270403fcd3",
-          "is_mirror": true,
-          "$note": "Mirror. Same sha256 as upstream, which follows as fallback."
-        },
-        {
-          "url": "https://github.com/OmniBlade/decomp.me/releases/download/msvcwin9x/msvc6.0.tar.gz",
-          "sha256": "5c81e9c2ab0ac5545022c1418a23392cb514db950cf6dcb1f48327270403fcd3"
-        }
-      ],
-      "layout": {
-        "bin": "Bin",
-        "include": "Include",
-        "lib": "Lib"
-      },
-      "contains": {
-        "cl": true,
-        "note": "VC6 service packs change codegen, so 6.0/SP5/SP6 need separate entries once mirrors are pinned; archaic-msvc hosts msvc600, msvc600_sp5, msvc600_sp5_vcpp and msvc600_sp6. Build confirmed by running cl.exe under wibo, 2026-10-31."
-      }
     }
   },
   "runners": {
     "wibo": {
       "name": "wibo",
-      "description": "Runs 32-bit Windows console binaries directly on Linux and macOS. No wine, no prefix, no drive letters. Only C: and Z: exist and both map to the host root.",
-      "license": "MIT",
       "version": "1.2.0",
       "mirrors": {
         "linux-x86_64": {
-          "url": "https://files.typeguru.nl/setup-msvc/packs/13f86a2d618f0dbe/wibo-x86_64",
           "sha256": "13f86a2d618f0dbe67179d349625345eabf9b46450295cb4c904e49f6aff85af",
+          "url": "https://files.typeguru.nl/setup-msvc/packs/13f86a2d618f0dbe/wibo-x86_64",
           "is_mirror": true,
           "fallback": "https://github.com/decompals/wibo/releases/download/1.2.0/wibo-x86_64"
         },
         "macos": {
-          "url": "https://files.typeguru.nl/setup-msvc/packs/2b3000ef6a7a490c/wibo-macos",
           "sha256": "2b3000ef6a7a490c24ccd71967735ae0005e218922e51806cca1b8d77fd3cf7c",
+          "url": "https://files.typeguru.nl/setup-msvc/packs/2b3000ef6a7a490c/wibo-macos",
           "is_mirror": true,
           "fallback": "https://github.com/decompals/wibo/releases/download/1.2.0/wibo-macos"
         }

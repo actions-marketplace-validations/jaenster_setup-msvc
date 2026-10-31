@@ -8,72 +8,126 @@ branding:
 inputs:
   version:
     description: >-
-      The toolchain to set up. Either an exact cl.exe build, which is what you
-      want for byte-matching ("14.00.50727.762"), or a friendly alias
-      ("8.0sp1", "2005sp1", "vc6"). 2005 RTM and SP1 emit different code and
-      cannot be told apart from a binary's Rich header, so prefer the exact
-      build when it matters. Run with list-only to see everything available.
+      The toolchain to set up: an exact cl.exe build ("14.00.50727.762") or an
+      alias ("8.0sp1", "2005sp1", "vc6"). Prefer the exact build when it
+      matters. Visual C++ 2005 RTM and SP1 both stamp 50727 in the PE Rich
+      header and emit different code, so for byte-matching work only the fourth
+      component tells them apart. The compiler is run after install and the
+      banner checked against the catalogue, so a wrong pack fails here.
     required: false
     default: '8.0sp1'
+  components:
+    description: >-
+      Comma-separated components to install. Empty installs all of them.
+      Names come from the toolchain's own layout: bin, include,
+      platform_sdk_include, lib, platform_sdk_lib. There are no presets on
+      purpose: "compile" and "link" would be a guess at your intent, and a
+      wrong guess shows up as a missing header several steps later. Compiling
+      needs bin,include,platform_sdk_include; linking adds lib,platform_sdk_lib.
+      Naming an unknown component fails immediately rather than quietly.
+    required: false
+    default: ''
+  extras:
+    description: >-
+      Comma-separated artifacts to install alongside the toolchain: a DirectX
+      header set, a redistributable DLL, a vendor SDK's import stubs. Defined in
+      the catalogue, or in your own file via extras-catalogue.
+    required: false
+    default: ''
+  extras-catalogue:
+    description: >-
+      Path, in your repository, to a catalogue file defining extras. Keeping
+      these in your own repo means they are reviewed in your PRs and pinned by
+      your git history. Only artifacts are merged: a third-party file cannot
+      redefine a toolchain, or `version: 8.0sp1` would mean different things in
+      different repositories.
+    required: false
+    default: ''
   runner:
     description: >-
-      How to execute the Windows compiler. "auto" picks native on a Windows
-      runner and wibo elsewhere. "native" runs cl.exe directly under WOW64 and
-      is the only option that can LINK today. "wibo" runs it on Linux or macOS
-      without wine, but wibo 1.2.0's link.exe aborts on a missing kernel32
-      import, so it is compile-only.
+      How to run the Windows compiler. "auto" picks native on Windows and wibo
+      elsewhere. "native" runs cl.exe under WOW64 and is the only way to LINK
+      today; wibo 1.2.0's link.exe aborts on a missing kernel32 import, so
+      Linux and macOS are compile-only.
     required: false
     default: 'auto'
-  list-only:
-    description: 'Print the catalogue and exit without downloading anything.'
+  cache-dir:
+    description: >-
+      Where downloads are cached. Defaults under RUNNER_TOOL_CACHE. Point this
+      at persistent storage on a self-hosted runner: GitHub Actions caches are
+      scoped per repository, so a shared directory on your own runner is the
+      only cross-repository cache that exists.
     required: false
-    default: 'false'
+    default: ''
+  install-dir:
+    description: 'Where toolchains are installed. Defaults under RUNNER_TOOL_CACHE.'
+    required: false
+    default: ''
   cache:
-    description: 'Cache the downloaded packs between runs.'
+    description: 'Cache downloads and installed toolchains between runs.'
     required: false
     default: 'true'
 
 outputs:
   version:
-    description: 'The cl.exe build that was actually set up, as cl.exe itself reports it.'
+    description: 'The cl.exe build actually installed, as cl.exe itself reports it.'
     value: ${{ steps.setup.outputs.version }}
   root:
-    description: 'Root of the composed toolchain on disk.'
+    description: 'Root of the installed toolchain.'
     value: ${{ steps.setup.outputs.root }}
   bin:
     description: 'Directory holding cl.exe.'
     value: ${{ steps.setup.outputs.bin }}
   can-link:
-    description: >-
-      "true" when the composed toolchain has libraries, so link.exe has
-      something to resolve against. "false" means compile-only.
-    value: ${{ steps.setup.outputs.can-link }}
+    description: '"true" when a lib component is installed, so link.exe has something to resolve against.'
+    value: ${{ steps.setup.outputs['can-link'] }}
 
 runs:
   using: composite
   steps:
-    - name: Set up Python
-      uses: actions/setup-python@v5
+    # Built from source rather than downloaded. GitHub runners ship Go, the
+    # build takes a few seconds and is cached, and it means the action has no
+    # release asset to go stale and no binary to trust that was not built from
+    # the commit you pinned.
+    - name: Cache the setup-msvc binary
+      id: bincache
+      uses: actions/cache@v4
       with:
-        python-version: '3.12'
+        path: ${{ github.action_path }}/.bin
+        key: setup-msvc-bin-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('${{ github.action_path }}/*.go', '${{ github.action_path }}/go.sum') }}
 
-    # The packs are pinned by sha256, so the cache key is the catalogue itself:
-    # change a pin and the cache is correctly missed.
-    - name: Cache the toolchain packs
-      if: inputs.cache == 'true' && inputs.list-only != 'true'
+    - name: Build setup-msvc
+      if: steps.bincache.outputs.cache-hit != 'true'
+      shell: bash
+      working-directory: ${{ github.action_path }}
+      run: |
+        mkdir -p .bin
+        go build -trimpath -ldflags="-s -w" -o .bin/ .
+
+    - name: Cache the toolchain
+      if: inputs.cache == 'true'
       uses: actions/cache@v4
       with:
         path: |
-          ${{ runner.tool_cache }}/setup-msvc/downloads
-          ${{ runner.tool_cache }}/setup-msvc/toolchains
-        key: setup-msvc-${{ runner.os }}-${{ inputs.version }}-${{ hashFiles('${{ github.action_path }}/catalogue.json') }}
+          ${{ inputs.cache-dir || format('{0}/setup-msvc/downloads', runner.tool_cache) }}
+          ${{ inputs.install-dir || format('{0}/setup-msvc/toolchains', runner.tool_cache) }}
+        key: setup-msvc-${{ runner.os }}-${{ inputs.version }}-${{ inputs.components }}-${{ hashFiles('${{ github.action_path }}/catalogue.json') }}
         restore-keys: |
+          setup-msvc-${{ runner.os }}-${{ inputs.version }}-${{ inputs.components }}-
           setup-msvc-${{ runner.os }}-${{ inputs.version }}-
 
     - name: Set up the toolchain
       id: setup
       shell: bash
       run: |
-        python3 "${{ github.action_path }}/scripts/setup_msvc.py" \
+        BIN="${{ github.action_path }}/.bin/setup-msvc"
+        [ -x "$BIN" ] || BIN="${{ github.action_path }}/.bin/setup-msvc.exe"
+        "$BIN" setup \
           --catalogue "${{ github.action_path }}/catalogue.json" \
-          ${{ inputs.list-only == 'true' && '--list' || format('--version "{0}" --runner "{1}"', inputs.version, inputs.runner) }}
+          --version "${{ inputs.version }}" \
+          --runner "${{ inputs.runner }}" \
+          ${{ inputs.components && format('--components "{0}"', inputs.components) || '' }} \
+          ${{ inputs.extras && format('--extras "{0}"', inputs.extras) || '' }} \
+          ${{ inputs.extras-catalogue && format('--extras-catalogue "{0}"', inputs.extras-catalogue) || '' }} \
+          ${{ inputs.cache-dir && format('--cache-dir "{0}"', inputs.cache-dir) || '' }} \
+          ${{ inputs.install-dir && format('--install-dir "{0}"', inputs.install-dir) || '' }}

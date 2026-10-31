@@ -24,13 +24,21 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-go@v5
         with:
-          python-version: '3.12'
-      - name: Every entry parses, resolves, and pins a hash per mirror
-        run: python3 tests/test_catalogue.py
+          go-version: 'stable'
+      - run: go vet ./...
+      - name: Every entry parses, resolves, pins a hash and agrees with its banner
+        run: go test ./... -v
       - name: The catalogue listing renders
-        run: python3 scripts/setup_msvc.py --list
+        run: go run . list
+      - name: Cross-compile for every runner OS
+        run: |
+          for t in linux/amd64 darwin/arm64 darwin/amd64 windows/amd64; do
+            GOOS=${t%/*} GOARCH=${t#*/} go build -trimpath -o /dev/null . \
+              || { echo "::error::cannot build for $t"; exit 1; }
+            echo "  ok $t"
+          done
 
   windows-link:
     name: compile and link on windows (${{ matrix.version }})
@@ -134,3 +142,16 @@ jobs:
             "$("$WIBO" path -w "$PWD/out/t.cpp")"
           file out/t.obj
           test -f out/t.obj
+
+      - name: Selective components fetch only what was asked for
+        shell: bash
+        run: |
+          # The compile set, without the libraries. Proves the size win is real
+          # and that skipping a component is reported rather than silent.
+          go run . setup --version 8.0sp1 \
+            --components bin,include,platform_sdk_include \
+            --cache-dir "$RUNNER_TEMP/sel-dl" --install-dir "$RUNNER_TEMP/sel-tc" \
+            | tee /tmp/sel.log
+          grep -q "linking NOT available" /tmp/sel.log \
+            || { echo "::error::expected a warning that linking is unavailable"; exit 1; }
+          du -sh "$RUNNER_TEMP/sel-dl"
