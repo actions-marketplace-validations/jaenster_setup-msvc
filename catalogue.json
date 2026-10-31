@@ -276,7 +276,7 @@
       "product": "2003",
       "banner": "Version 13.10.3077 for 80x86",
       "license": "proprietary",
-      "runs_under_wibo": null,
+      "runs_under_wibo": true,
       "mirrors": [
         {
           "url": "https://files.typeguru.nl/setup-msvc/packs/49eba7f9f72644f6/msvc7.0.tar.gz",
@@ -297,7 +297,7 @@
       },
       "contains": {
         "cl": true,
-        "note": "Headers are VC's and the SDK's merged into one Include folder."
+        "note": "Headers are VC's and the SDK's merged into one Include folder. Build confirmed by running cl.exe under wibo, 2026-10-31."
       }
     },
     "13.00.9466": {
@@ -308,9 +308,9 @@
       ],
       "name": "Visual C++ .NET 2002",
       "product": "2002",
-      "banner": null,
+      "banner": "Version 13.00.9466 for 80x86",
       "license": "proprietary",
-      "runs_under_wibo": null,
+      "runs_under_wibo": true,
       "mirrors": [
         {
           "url": "https://files.typeguru.nl/setup-msvc/packs/9b995af7ff4b31f7/msvc7.0.tar.gz",
@@ -330,7 +330,7 @@
       },
       "contains": {
         "cl": true,
-        "note": "Build number unconfirmed; the action records whatever banner cl.exe prints on first setup."
+        "note": "Build confirmed by running cl.exe under wibo, 2026-10-31."
       }
     },
     "12.00.8168": {
@@ -341,9 +341,9 @@
       ],
       "name": "Visual C++ 6.0",
       "product": "6.0",
-      "banner": null,
+      "banner": "Version 12.00.8168 for 80x86",
       "license": "proprietary",
-      "runs_under_wibo": null,
+      "runs_under_wibo": true,
       "mirrors": [
         {
           "url": "https://files.typeguru.nl/setup-msvc/packs/5c81e9c2ab0ac554/msvc6.0.tar.gz",
@@ -363,7 +363,7 @@
       },
       "contains": {
         "cl": true,
-        "note": "Build number unconfirmed. VC6 service packs change codegen, so 6.0/SP5/SP6 need separate entries once mirrors are pinned; archaic-msvc hosts msvc600, msvc600_sp5, msvc600_sp5_vcpp and msvc600_sp6."
+        "note": "VC6 service packs change codegen, so 6.0/SP5/SP6 need separate entries once mirrors are pinned; archaic-msvc hosts msvc600, msvc600_sp5, msvc600_sp5_vcpp and msvc600_sp6. Build confirmed by running cl.exe under wibo, 2026-10-31."
       }
     }
   },

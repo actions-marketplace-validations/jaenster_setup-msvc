@@ -90,9 +90,9 @@ so this is a small upstream fix away from working.
 - **No SP1 CRT libraries anywhere.** `libcmt.lib` and `libcpmt.lib` as shipped by
   SP1 are in neither pack. The RTM ones will link, but will not byte-match a
   binary that linked SP1's. The only source is the SP1 patch installer.
-- **6.0 and 7.0 build numbers are unconfirmed** and have no pinned banner, so
-  verification only warns for those. VC6 service packs change codegen, so
-  `6.0`/SP5/SP6 need separate entries once their mirrors are pinned.
+- **VC6 service packs are not yet separate entries.** SP5 and SP6 change codegen,
+  so they need their own entries once their mirrors are pinned; `archaic-msvc`
+  hosts `msvc600`, `msvc600_sp5`, `msvc600_sp5_vcpp` and `msvc600_sp6`.
 
 ## This action redistributes nothing
 
