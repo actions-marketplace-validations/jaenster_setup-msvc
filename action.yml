@@ -1,0 +1,82 @@
+name: 'Setup historical MSVC'
+description: >-
+  Set up a historical Microsoft Visual C++ toolchain (6.0 through 2010) in CI,
+  keyed on the exact cl.exe build, and verify the compiler is the one you asked
+  for. For byte-matching decompilation and recompilation work.
+author: 'jaenster'
+branding:
+  icon: 'cpu'
+  color: 'gray-dark'
+
+inputs:
+  version:
+    description: >-
+      The toolchain to set up. Either an exact cl.exe build, which is what you
+      want for byte-matching ("14.00.50727.762"), or a friendly alias
+      ("8.0sp1", "2005sp1", "vc6"). 2005 RTM and SP1 emit different code and
+      cannot be told apart from a binary's Rich header, so prefer the exact
+      build when it matters. Run with list-only to see everything available.
+    required: false
+    default: '8.0sp1'
+  runner:
+    description: >-
+      How to execute the Windows compiler. "auto" picks native on a Windows
+      runner and wibo elsewhere. "native" runs cl.exe directly under WOW64 and
+      is the only option that can LINK today. "wibo" runs it on Linux or macOS
+      without wine, but wibo 1.2.0's link.exe aborts on a missing kernel32
+      import, so it is compile-only.
+    required: false
+    default: 'auto'
+  list-only:
+    description: 'Print the catalogue and exit without downloading anything.'
+    required: false
+    default: 'false'
+  cache:
+    description: 'Cache the downloaded packs between runs.'
+    required: false
+    default: 'true'
+
+outputs:
+  version:
+    description: 'The cl.exe build that was actually set up, as cl.exe itself reports it.'
+    value: ${{ steps.setup.outputs.version }}
+  root:
+    description: 'Root of the composed toolchain on disk.'
+    value: ${{ steps.setup.outputs.root }}
+  bin:
+    description: 'Directory holding cl.exe.'
+    value: ${{ steps.setup.outputs.bin }}
+  can-link:
+    description: >-
+      "true" when the composed toolchain has libraries, so link.exe has
+      something to resolve against. "false" means compile-only.
+    value: ${{ steps.setup.outputs.can-link }}
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    # The packs are pinned by sha256, so the cache key is the catalogue itself:
+    # change a pin and the cache is correctly missed.
+    - name: Cache the toolchain packs
+      if: inputs.cache == 'true' && inputs.list-only != 'true'
+      uses: actions/cache@v4
+      with:
+        path: |
+          ${{ runner.tool_cache }}/setup-msvc/downloads
+          ${{ runner.tool_cache }}/setup-msvc/toolchains
+        key: setup-msvc-${{ runner.os }}-${{ inputs.version }}-${{ hashFiles('${{ github.action_path }}/catalogue.json') }}
+        restore-keys: |
+          setup-msvc-${{ runner.os }}-${{ inputs.version }}-
+
+    - name: Set up the toolchain
+      id: setup
+      shell: bash
+      run: |
+        python3 "${{ github.action_path }}/scripts/setup_msvc.py" \
+          --catalogue "${{ github.action_path }}/catalogue.json" \
+          ${{ inputs.list-only == 'true' && '--list' || format('--version "{0}" --runner "{1}"', inputs.version, inputs.runner) }}

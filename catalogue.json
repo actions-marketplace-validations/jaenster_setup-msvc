@@ -1,0 +1,231 @@
+{
+  "$comment": [
+    "Every toolchain this action can set up, keyed by the exact cl.exe build.",
+    "",
+    "WHY THE EXACT BUILD IS THE KEY, not the marketing version: for byte-matching",
+    "work the compiler's identity IS the question. Visual C++ 2005 RTM and SP1 both",
+    "stamp 50727 in the PE Rich header, so a binary cannot tell you which one built",
+    "it; only the fourth component (.42 vs .762) distinguishes them, and they emit",
+    "different code. Any version close to another gets its own entry here.",
+    "",
+    "'mirrors' is a list on purpose. These are third-party community archives and",
+    "any one of them can disappear; the action tries each in order and verifies the",
+    "same sha256 whichever answers. This action redistributes nothing: it points at",
+    "upstream and checks what arrives.",
+    "",
+    "'contains' is measured, not assumed. It is there because the packs differ",
+    "wildly in completeness and a missing lib/ directory is not discoverable until",
+    "a build fails confusingly."
+  ],
+  "schema": 1,
+  "toolchains": {
+    "14.00.50727.762": {
+      "aliases": ["8.0sp1", "2005sp1", "vc8sp1", "msvc8.0sp1"],
+      "name": "Visual C++ 2005 SP1",
+      "product": "2005",
+      "banner": "Version 14.00.50727.762 for 80x86",
+      "license": "proprietary",
+      "runs_under_wibo": true,
+      "mirrors": [
+        {
+          "url": "https://github.com/Drahsid/ffxiv_msvc8.0sp1/archive/0d6f444cfc120e4e62a092726844fa310c74b1bc.tar.gz",
+          "sha256": "e728de13878c2876e855e2206fc4b8b0a52a3e801c29bd8e0478ef1670aa7be7",
+          "strip_prefix": "ffxiv_msvc8.0sp1-0d6f444cfc120e4e62a092726844fa310c74b1bc",
+          "download_bytes": 16266000
+        }
+      ],
+      "layout": { "bin": "bin", "include": "include", "platform_sdk_include": "PlatformSDK/Include" },
+      "contains": {
+        "cl": true, "ml": true, "link": true,
+        "lib_exe": false, "dumpbin": false, "undname": false, "rc": false,
+        "crt_headers": true, "platform_sdk_headers": true,
+        "crt_libs": false, "platform_sdk_libs": false, "directx_headers": false,
+        "note": "No libraries of any kind. Its 42 .lib files are CRT-source build inputs, not libcmt.lib. Compile-only unless paired with libs_from."
+      },
+      "libs_from": "14.00.50727.42"
+    },
+    "14.00.50727.42": {
+      "aliases": ["8.0", "2005", "vc8", "msvc8.0"],
+      "name": "Visual C++ 2005 RTM",
+      "product": "2005",
+      "banner": "Version 14.00.50727.42 for 80x86",
+      "license": "proprietary",
+      "runs_under_wibo": true,
+      "mirrors": [
+        {
+          "url": "https://github.com/widberg/msvc8.0/archive/936f93b9e9e92943ed5c9398d24712a32c2e9fe4.tar.gz",
+          "sha256": "18e876d22285aa17be6676d765be6556cb30ffb26e0c9dad59ddd66e5ccf6afa",
+          "strip_prefix": "msvc8.0-936f93b9e9e92943ed5c9398d24712a32c2e9fe4",
+          "download_bytes": 65000000
+        }
+      ],
+      "layout": {
+        "bin": "bin", "include": "include", "lib": "lib",
+        "platform_sdk_include": "PlatformSDK/Include", "platform_sdk_lib": "PlatformSDK/Lib"
+      },
+      "contains": {
+        "cl": true, "ml": true, "link": true,
+        "lib_exe": true, "dumpbin": true, "undname": true, "rc": true,
+        "crt_headers": true, "platform_sdk_headers": true,
+        "crt_libs": true, "platform_sdk_libs": true, "directx_headers": false,
+        "note": "Complete toolchain: libcmt.lib, libcpmt.lib, 196 Platform SDK import libs, atlmfc and redist. The usual source of libraries for the SP1 pack."
+      }
+    },
+    "15.00.21022.08": {
+      "aliases": ["9.0", "2008", "vc9"],
+      "name": "Visual C++ 2008 RTM",
+      "product": "2008",
+      "banner": "Version 15.00.21022.08 for 80x86",
+      "license": "proprietary",
+      "runs_under_wibo": null,
+      "mirrors": [
+        {
+          "url": "https://github.com/archaic-msvc/msvc900/archive/c9d710cef9a3dec08d7d2dca78a3b494335a5baa.tar.gz",
+          "sha256": "084c135403e1f46abd1db1b7059de9ae95a4304049d2428f2816818e89004b89",
+          "strip_prefix": "msvc900-c9d710cef9a3dec08d7d2dca78a3b494335a5baa"
+        }
+      ],
+      "layout": {
+        "bin": "VC/bin", "include": "VC/include", "lib": "VC/lib",
+        "platform_sdk_include": "Microsoft SDKs/Windows/v6.0A/Include",
+        "platform_sdk_lib": "Microsoft SDKs/Windows/v6.0A/Lib"
+      },
+      "contains": { "cl": true, "note": "Not yet verified by this action's own test suite." }
+    },
+    "15.00.30729.01": {
+      "aliases": ["9.0sp1", "2008sp1"],
+      "name": "Visual C++ 2008 SP1",
+      "product": "2008",
+      "banner": "Version 15.00.30729.01 for 80x86",
+      "license": "proprietary",
+      "runs_under_wibo": null,
+      "mirrors": [
+        {
+          "url": "https://github.com/Marvisak/msvc900_sp1/archive/a1465772ad6c5767f6d191ff0861282efc822f5c.tar.gz",
+          "sha256": "2544e8fb817421bd5a09fd4cc243ff0a0db6049cf1a15b92a7b4a3f1f6568e69",
+          "strip_prefix": "msvc900_sp1-a1465772ad6c5767f6d191ff0861282efc822f5c"
+        }
+      ],
+      "layout": {
+        "bin": "VC/bin", "include": "VC/include", "lib": "VC/lib",
+        "platform_sdk_include": "Microsoft SDKs/Windows/v6.0A/Include",
+        "platform_sdk_lib": "Microsoft SDKs/Windows/v6.0A/Lib"
+      },
+      "contains": { "cl": true, "note": "Not yet verified by this action's own test suite." }
+    },
+    "16.00.30319.01": {
+      "aliases": ["10.0", "2010", "vc10"],
+      "name": "Visual C++ 2010 RTM",
+      "product": "2010",
+      "banner": "Version 16.00.30319.01 for 80x86",
+      "license": "proprietary",
+      "runs_under_wibo": null,
+      "mirrors": [
+        {
+          "url": "https://github.com/archaic-msvc/msvc1000/archive/f8977e2cacbe6cab4f9e73eb2c05695a88519bfe.tar.gz",
+          "sha256": "923684491a7e3fbdc326a0681c7d8d4ecfb9a9d217638038ac2859c702c45b01",
+          "strip_prefix": "msvc1000-f8977e2cacbe6cab4f9e73eb2c05695a88519bfe"
+        }
+      ],
+      "layout": {
+        "bin": "VC/bin", "include": "VC/include", "lib": "VC/lib",
+        "platform_sdk_include": "Microsoft SDKs/Windows/v7.0A/Include",
+        "platform_sdk_lib": "Microsoft SDKs/Windows/v7.0A/Lib"
+      },
+      "contains": { "cl": true, "note": "Needs msvcp100.dll beside cl.exe; wibo has no builtin for it." }
+    },
+    "16.00.40219.01": {
+      "aliases": ["10.0sp1", "2010sp1"],
+      "name": "Visual C++ 2010 SP1",
+      "product": "2010",
+      "banner": "Version 16.00.40219.01 for 80x86",
+      "license": "proprietary",
+      "runs_under_wibo": null,
+      "mirrors": [
+        {
+          "url": "https://github.com/archaic-msvc/msvc1000_sp1/archive/09a53c11f781ec9ab5e66772ba720b9d85e4c2a4.tar.gz",
+          "sha256": "4d256b37c4fea1327c554e19f9fda3078155a404699a5fb3f33a8a4804258bfb",
+          "strip_prefix": "msvc1000_sp1-09a53c11f781ec9ab5e66772ba720b9d85e4c2a4"
+        }
+      ],
+      "layout": {
+        "bin": "VC/bin", "include": "VC/include", "lib": "VC/lib",
+        "platform_sdk_include": "Microsoft SDKs/Windows/v7.0A/Include",
+        "platform_sdk_lib": "Microsoft SDKs/Windows/v7.0A/Lib"
+      },
+      "contains": { "cl": true, "note": "Needs msvcp100.dll beside cl.exe; wibo has no builtin for it." }
+    },
+    "13.10.3077": {
+      "aliases": ["7.1", "2003", "vc71"],
+      "name": "Visual C++ .NET 2003",
+      "product": "2003",
+      "banner": "Version 13.10.3077 for 80x86",
+      "license": "proprietary",
+      "runs_under_wibo": null,
+      "mirrors": [
+        {
+          "url": "https://github.com/OmniBlade/decomp.me/releases/download/msvcwin9x/msvc7.0.tar.gz",
+          "sha256": "49eba7f9f72644f6f872a4176baeac544e8b5dfb2be1f47bb4d439b1136ffeac",
+          "$note": "Despite the filename this archive holds 7.1 (13.10.3077), not 7.0."
+        }
+      ],
+      "layout": { "bin": "Bin", "include": "Include", "lib": "Lib" },
+      "contains": { "cl": true, "note": "Headers are VC's and the SDK's merged into one Include folder." }
+    },
+    "13.00.9466": {
+      "aliases": ["7.0", "2002", "vc70"],
+      "name": "Visual C++ .NET 2002",
+      "product": "2002",
+      "banner": null,
+      "license": "proprietary",
+      "runs_under_wibo": null,
+      "mirrors": [
+        {
+          "url": "https://github.com/roblabla/MSVC-7.0-Portable/releases/download/release/msvc7.0.tar.gz",
+          "sha256": "9b995af7ff4b31f7d8cc91194f54e21a0a07ff6be360a94e9aa3686649b3f072"
+        }
+      ],
+      "layout": { "bin": "Bin", "include": "Include", "lib": "Lib" },
+      "contains": { "cl": true, "note": "Build number unconfirmed; the action records whatever banner cl.exe prints on first setup." }
+    },
+    "12.00.8168": {
+      "aliases": ["6.0", "98", "vc6"],
+      "name": "Visual C++ 6.0",
+      "product": "6.0",
+      "banner": null,
+      "license": "proprietary",
+      "runs_under_wibo": null,
+      "mirrors": [
+        {
+          "url": "https://github.com/OmniBlade/decomp.me/releases/download/msvcwin9x/msvc6.0.tar.gz",
+          "sha256": "5c81e9c2ab0ac5545022c1418a23392cb514db950cf6dcb1f48327270403fcd3"
+        }
+      ],
+      "layout": { "bin": "Bin", "include": "Include", "lib": "Lib" },
+      "contains": { "cl": true, "note": "Build number unconfirmed. VC6 service packs change codegen, so 6.0/SP5/SP6 need separate entries once mirrors are pinned; archaic-msvc hosts msvc600, msvc600_sp5, msvc600_sp5_vcpp and msvc600_sp6." }
+    }
+  },
+  "runners": {
+    "wibo": {
+      "name": "wibo",
+      "description": "Runs 32-bit Windows console binaries directly on Linux and macOS. No wine, no prefix, no drive letters. Only C: and Z: exist and both map to the host root.",
+      "license": "MIT",
+      "version": "1.2.0",
+      "mirrors": {
+        "linux-x86_64": {
+          "url": "https://github.com/decompals/wibo/releases/download/1.2.0/wibo-x86_64",
+          "sha256": "13f86a2d618f0dbe67179d349625345eabf9b46450295cb4c904e49f6aff85af"
+        },
+        "macos": {
+          "url": "https://github.com/decompals/wibo/releases/download/1.2.0/wibo-macos",
+          "sha256": "2b3000ef6a7a490c24ccd71967735ae0005e218922e51806cca1b8d77fd3cf7c"
+        }
+      },
+      "known_gaps": [
+        "link.exe aborts on the missing kernel32 import lstrcmpiW. Also missing GetTempPathW, CopyFileW, ExpandEnvironmentStringsW, FormatMessageW. lstrcmpiW and GetTempPathW are implemented in wibo main but not in 1.2.0.",
+        "1.2.0 throws an uncaught filesystem_error if any PATH entry cannot be stat'ed, which happens when /usr/local/bin is root-only. This action pins PATH to avoid it.",
+        "cl.exe and ml.exe are unaffected: c1/c1xx/c2 are in-process DLLs, and /Z7 avoids mspdbsrv entirely."
+      ]
+    }
+  }
+}
