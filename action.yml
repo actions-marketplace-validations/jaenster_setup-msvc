@@ -1,8 +1,5 @@
 name: 'Setup historical MSVC'
-description: >-
-  Set up a historical Microsoft Visual C++ toolchain (6.0 through 2010) in CI,
-  keyed on the exact cl.exe build, and verify the compiler is the one you asked
-  for. For byte-matching decompilation and recompilation work.
+description: 'Set up a historical MSVC toolchain (6.0 to 2010) in CI, keyed on the exact cl.exe build and verified after install.'
 author: 'jaenster'
 branding:
   icon: 'cpu'
