@@ -102,15 +102,6 @@ because any one of those archives can disappear; the action tries each in turn a
 verifies the same hash whichever answers. You are responsible for being licensed
 to use what you fetch.
 
-## Implementation note
-
-The reference implementation is Python, deliberately temporary. It exists to pin
-the behaviour in CI, because the facts churned while this was being written: the
-SP1 pack having no libraries, and `link.exe` failing under wibo, were both
-discovered rather than assumed. Once `tests/` holds the behaviour still, this
-becomes a small Zig binary cross-compiled for all three runner OSes, which also
-drops the `setup-python` step.
-
 ## Credits
 
 The pack URLs and hashes were assembled from the decomp community's own work,
