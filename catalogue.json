@@ -37,6 +37,7 @@
           "sha256": "e728de13878c2876e855e2206fc4b8b0a52a3e801c29bd8e0478ef1670aa7be7",
           "strip_prefix": "ffxiv_msvc8.0sp1-0d6f444cfc120e4e62a092726844fa310c74b1bc",
           "download_bytes": 16266000,
+          "is_mirror": true,
           "$note": "Mirror. Same sha256 as upstream, which follows as fallback."
         },
         {
@@ -86,6 +87,7 @@
           "sha256": "18e876d22285aa17be6676d765be6556cb30ffb26e0c9dad59ddd66e5ccf6afa",
           "strip_prefix": "msvc8.0-936f93b9e9e92943ed5c9398d24712a32c2e9fe4",
           "download_bytes": 65000000,
+          "is_mirror": true,
           "$note": "Mirror. Same sha256 as upstream, which follows as fallback."
         },
         {
@@ -134,6 +136,7 @@
           "url": "https://files.typeguru.nl/setup-msvc/packs/084c135403e1f46a/c9d710cef9a3dec08d7d2dca78a3b494335a5baa.tar.gz",
           "sha256": "084c135403e1f46abd1db1b7059de9ae95a4304049d2428f2816818e89004b89",
           "strip_prefix": "msvc900-c9d710cef9a3dec08d7d2dca78a3b494335a5baa",
+          "is_mirror": true,
           "$note": "Mirror. Same sha256 as upstream, which follows as fallback."
         },
         {
@@ -169,6 +172,7 @@
           "url": "https://files.typeguru.nl/setup-msvc/packs/2544e8fb817421bd/a1465772ad6c5767f6d191ff0861282efc822f5c.tar.gz",
           "sha256": "2544e8fb817421bd5a09fd4cc243ff0a0db6049cf1a15b92a7b4a3f1f6568e69",
           "strip_prefix": "msvc900_sp1-a1465772ad6c5767f6d191ff0861282efc822f5c",
+          "is_mirror": true,
           "$note": "Mirror. Same sha256 as upstream, which follows as fallback."
         },
         {
@@ -205,6 +209,7 @@
           "url": "https://files.typeguru.nl/setup-msvc/packs/923684491a7e3fbd/f8977e2cacbe6cab4f9e73eb2c05695a88519bfe.tar.gz",
           "sha256": "923684491a7e3fbdc326a0681c7d8d4ecfb9a9d217638038ac2859c702c45b01",
           "strip_prefix": "msvc1000-f8977e2cacbe6cab4f9e73eb2c05695a88519bfe",
+          "is_mirror": true,
           "$note": "Mirror. Same sha256 as upstream, which follows as fallback."
         },
         {
@@ -240,6 +245,7 @@
           "url": "https://files.typeguru.nl/setup-msvc/packs/4d256b37c4fea132/09a53c11f781ec9ab5e66772ba720b9d85e4c2a4.tar.gz",
           "sha256": "4d256b37c4fea1327c554e19f9fda3078155a404699a5fb3f33a8a4804258bfb",
           "strip_prefix": "msvc1000_sp1-09a53c11f781ec9ab5e66772ba720b9d85e4c2a4",
+          "is_mirror": true,
           "$note": "Mirror. Same sha256 as upstream, which follows as fallback."
         },
         {
@@ -275,6 +281,7 @@
         {
           "url": "https://files.typeguru.nl/setup-msvc/packs/49eba7f9f72644f6/msvc7.0.tar.gz",
           "sha256": "49eba7f9f72644f6f872a4176baeac544e8b5dfb2be1f47bb4d439b1136ffeac",
+          "is_mirror": true,
           "$note": "Mirror. Same sha256 as upstream, which follows as fallback."
         },
         {
@@ -308,6 +315,7 @@
         {
           "url": "https://files.typeguru.nl/setup-msvc/packs/9b995af7ff4b31f7/msvc7.0.tar.gz",
           "sha256": "9b995af7ff4b31f7d8cc91194f54e21a0a07ff6be360a94e9aa3686649b3f072",
+          "is_mirror": true,
           "$note": "Mirror. Same sha256 as upstream, which follows as fallback."
         },
         {
@@ -340,6 +348,7 @@
         {
           "url": "https://files.typeguru.nl/setup-msvc/packs/5c81e9c2ab0ac554/msvc6.0.tar.gz",
           "sha256": "5c81e9c2ab0ac5545022c1418a23392cb514db950cf6dcb1f48327270403fcd3",
+          "is_mirror": true,
           "$note": "Mirror. Same sha256 as upstream, which follows as fallback."
         },
         {
@@ -368,11 +377,13 @@
         "linux-x86_64": {
           "url": "https://files.typeguru.nl/setup-msvc/packs/13f86a2d618f0dbe/wibo-x86_64",
           "sha256": "13f86a2d618f0dbe67179d349625345eabf9b46450295cb4c904e49f6aff85af",
+          "is_mirror": true,
           "fallback": "https://github.com/decompals/wibo/releases/download/1.2.0/wibo-x86_64"
         },
         "macos": {
           "url": "https://files.typeguru.nl/setup-msvc/packs/2b3000ef6a7a490c/wibo-macos",
           "sha256": "2b3000ef6a7a490c24ccd71967735ae0005e218922e51806cca1b8d77fd3cf7c",
+          "is_mirror": true,
           "fallback": "https://github.com/decompals/wibo/releases/download/1.2.0/wibo-macos"
         }
       },

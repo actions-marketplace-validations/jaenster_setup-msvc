@@ -50,6 +50,32 @@ def entries(cat: dict):
             yield f"runner {rname} / {plat}", r, mi
 
 
+def upstreams(cat: dict):
+    """One entry per distinct archive, always the UPSTREAM source.
+
+    Once `adopt` has run, the catalogue's first mirror for each archive is our
+    own. Populating the mirror from itself is both circular and, the first time,
+    a pile of 404s, so anything tagged is_mirror is skipped here. The remaining
+    URL is the one that actually holds the bytes.
+    """
+    seen: set[str] = set()
+    for label, _parent, mi in entries(cat):
+        if mi["sha256"] in seen:
+            continue
+        if mi.get("is_mirror"):
+            # Toolchains keep upstream as a later list entry, which this loop
+            # reaches on its own. Runners have one entry per platform, so adopt
+            # had to stash upstream in `fallback` -- it is the only copy.
+            fb = mi.get("fallback")
+            if not fb:
+                continue
+            seen.add(mi["sha256"])
+            yield label, {"url": fb, "sha256": mi["sha256"]}
+            continue
+        seen.add(mi["sha256"])
+        yield label, mi
+
+
 def local_path(mirror_root: Path, mi: dict) -> Path:
     name = Path(urlparse(mi["url"]).path).name or "download"
     return mirror_root / "packs" / mi["sha256"][:16] / name
@@ -62,13 +88,11 @@ def rel_url(mi: dict) -> str:
 
 def cmd_fetch(cat: dict, mirror_root: Path, only: str | None) -> int:
     bad = 0
-    seen: set[str] = set()
-    for label, _parent, mi in entries(cat):
+    total = 0
+    for label, mi in upstreams(cat):
         if only and only not in label:
             continue
-        if mi["sha256"] in seen:
-            continue
-        seen.add(mi["sha256"])
+        total += 1
         dest = local_path(mirror_root, mi)
         if dest.is_file() and m.sha256_file(dest) == mi["sha256"]:
             print(f"  have  {label}: {rel_url(mi)}")
@@ -93,18 +117,14 @@ def cmd_fetch(cat: dict, mirror_root: Path, only: str | None) -> int:
         tmp.replace(dest)
         size = dest.stat().st_size
         print(f"        ok, {size / 1e6:.1f} MB -> {rel_url(mi)}")
-    print(f"\n{len(seen) - bad}/{len(seen)} archives mirrored"
+    print(f"\n{total - bad}/{total} archives mirrored"
           + ("" if not bad else f", {bad} FAILED"))
     return 1 if bad else 0
 
 
 def cmd_verify(cat: dict, mirror_root: Path) -> int:
     missing = wrong = ok = 0
-    seen: set[str] = set()
-    for label, _parent, mi in entries(cat):
-        if mi["sha256"] in seen:
-            continue
-        seen.add(mi["sha256"])
+    for label, mi in upstreams(cat):
         dest = local_path(mirror_root, mi)
         if not dest.is_file():
             print(f"  MISSING  {label}: {rel_url(mi)}")
@@ -133,6 +153,7 @@ def cmd_adopt(cat_path: Path, cat: dict, base: str) -> int:
         for key in ("strip_prefix", "download_bytes"):
             if key in first:
                 ours[key] = first[key]
+        ours["is_mirror"] = True
         ours["$note"] = "Mirror. Same sha256 as upstream, which follows as fallback."
         added += 1
         return [ours] + upstream
@@ -146,6 +167,7 @@ def cmd_adopt(cat_path: Path, cat: dict, base: str) -> int:
                 r["mirrors"][plat] = {
                     "url": f"{base}/{rel_url(mi)}",
                     "sha256": mi["sha256"],
+                    "is_mirror": True,
                     "fallback": mi["url"],
                 }
                 added += 1
